@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { FormData } from "@/types";
+import emailjs from "@emailjs/browser";
 
 const Contact = () => {
     const [formData, setFormData] = useState<FormData>({
@@ -10,7 +11,9 @@ const Contact = () => {
         email: "",
         message: "",
     });
-    const [isSubmitted, setIsSubmitted] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [submitStatus, setSubmitStatus] = useState<"idle" | "success" | "error">("idle");
+    const [errorMessage, setErrorMessage] = useState("");
 
     const handleChange = (
         e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -21,15 +24,63 @@ const Contact = () => {
         });
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        // TODO: Add backend integration or email service
-        console.log("Form submitted:", formData);
-        setIsSubmitted(true);
-        setTimeout(() => {
-            setIsSubmitted(false);
-            setFormData({ name: "", email: "", message: "" });
-        }, 3000);
+        setIsSubmitting(true);
+        setSubmitStatus("idle");
+        setErrorMessage("");
+
+        try {
+            // EmailJS configuration
+            const serviceId = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID;
+            const templateId = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID;
+            const publicKey = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY;
+
+            // Validate environment variables
+            if (!serviceId || !templateId || !publicKey) {
+                throw new Error("EmailJS configuration is missing. Please check your environment variables.");
+            }
+
+            // Send email using EmailJS
+            const response = await emailjs.send(
+                serviceId,
+                templateId,
+                {
+                    from_name: formData.name,
+                    from_email: formData.email,
+                    message: formData.message,
+                },
+                publicKey
+            );
+
+            if (response.status === 200) {
+                setSubmitStatus("success");
+                setFormData({ name: "", email: "", message: "" });
+
+                // Reset success message after 5 seconds
+                setTimeout(() => {
+                    setSubmitStatus("idle");
+                }, 5000);
+            }
+        } catch (error) {
+            console.error("EmailJS Error:", error);
+            setSubmitStatus("error");
+
+            // Set user-friendly error message
+            if (error instanceof Error) {
+                setErrorMessage(error.message);
+            } else {
+                setErrorMessage("Failed to send message. Please try again or contact me directly via email.");
+            }
+
+            // Reset error message after 7 seconds
+            setTimeout(() => {
+                setSubmitStatus("idle");
+                setErrorMessage("");
+            }, 7000);
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     return (
@@ -111,12 +162,50 @@ const Contact = () => {
 
                             <motion.button
                                 type="submit"
-                                whileHover={{ scale: 1.05 }}
-                                whileTap={{ scale: 0.95 }}
-                                className="w-full px-8 py-4 bg-gradient-to-r from-gold to-yellow-600 text-navy font-semibold rounded-lg shadow-lg hover:shadow-gold/50 transition-all duration-300"
+                                disabled={isSubmitting}
+                                whileHover={{ scale: isSubmitting ? 1 : 1.05 }}
+                                whileTap={{ scale: isSubmitting ? 1 : 0.95 }}
+                                className={`w-full px-8 py-4 font-semibold rounded-lg shadow-lg transition-all duration-300 ${isSubmitting
+                                        ? "bg-gray-600 cursor-not-allowed"
+                                        : submitStatus === "success"
+                                            ? "bg-green-600 hover:bg-green-700"
+                                            : submitStatus === "error"
+                                                ? "bg-red-600 hover:bg-red-700"
+                                                : "bg-gradient-to-r from-gold to-yellow-600 hover:shadow-gold/50"
+                                    } text-white`}
                             >
-                                {isSubmitted ? "Message Sent! ✓" : "Send Message"}
+                                {isSubmitting
+                                    ? "Sending..."
+                                    : submitStatus === "success"
+                                        ? "Message Sent Successfully! ✓"
+                                        : submitStatus === "error"
+                                            ? "Failed to Send ✗"
+                                            : "Send Message"}
                             </motion.button>
+
+                            {/* Error Message Display */}
+                            {submitStatus === "error" && errorMessage && (
+                                <motion.div
+                                    initial={{ opacity: 0, y: -10 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    className="mt-4 p-4 bg-red-500/10 border border-red-500/50 rounded-lg"
+                                >
+                                    <p className="text-red-400 text-sm">{errorMessage}</p>
+                                </motion.div>
+                            )}
+
+                            {/* Success Message Display */}
+                            {submitStatus === "success" && (
+                                <motion.div
+                                    initial={{ opacity: 0, y: -10 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    className="mt-4 p-4 bg-green-500/10 border border-green-500/50 rounded-lg"
+                                >
+                                    <p className="text-green-400 text-sm">
+                                        Thank you for your message! I'll get back to you soon.
+                                    </p>
+                                </motion.div>
+                            )}
                         </form>
                     </motion.div>
 
