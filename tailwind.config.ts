@@ -9,9 +9,9 @@ const config: Config = {
     theme: {
         extend: {
             colors: {
-                navy: "#0D3B66",
-                charcoal: "#3C3C3C",
-                gold: "#C7A008",
+                navy: "#1B4965",
+                charcoal: "#3D3D3D",
+                gold: "#D4A017",
             },
             fontFamily: {
                 poppins: ["Poppins", "sans-serif"],
@@ -33,8 +33,8 @@ const config: Config = {
                     "100%": { transform: "translateY(0)", opacity: "1" },
                 },
                 glow: {
-                    "0%": { boxShadow: "0 0 5px #C7A008, 0 0 10px #C7A008" },
-                    "100%": { boxShadow: "0 0 10px #C7A008, 0 0 20px #C7A008, 0 0 30px #C7A008" },
+                    "0%": { boxShadow: "0 0 5px #D4A017, 0 0 10px #D4A017" },
+                    "100%": { boxShadow: "0 0 10px #D4A017, 0 0 20px #D4A017, 0 0 30px #D4A017" },
                 },
             },
             backdropBlur: {

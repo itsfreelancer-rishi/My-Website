@@ -65,11 +65,13 @@ const Hero = () => {
                 animate="visible"
                 className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center"
             >
-                {/* Logo/Monogram - REPLACE WITH YOUR LOGO */}
+                {/* Logo */}
                 <motion.div variants={itemVariants} className="mb-8 flex justify-center">
-                    <div className="w-24 h-24 bg-gradient-to-br from-gold to-yellow-600 rounded-2xl flex items-center justify-center shadow-2xl">
-                        <span className="text-navy font-bold text-4xl font-poppins">RR</span>
-                    </div>
+                    <img
+                        src="/logo.png"
+                        alt="RR Web Studio Logo"
+                        className="w-32 h-32 md:w-40 md:h-40 object-contain drop-shadow-2xl"
+                    />
                 </motion.div>
 
                 <motion.h1

@@ -19,9 +19,11 @@ const Footer = () => {
                     {/* Logo & Copyright */}
                     <div className="text-center md:text-left">
                         <div className="flex items-center justify-center md:justify-start space-x-2 mb-2">
-                            <div className="w-8 h-8 bg-gradient-to-br from-gold to-yellow-600 rounded-lg flex items-center justify-center font-bold text-navy text-sm">
-                                RR
-                            </div>
+                            <img
+                                src="/logo.png"
+                                alt="RR Web Studio"
+                                className="w-10 h-10 object-contain"
+                            />
                             <span className="text-white font-poppins font-bold">RR Web Studio</span>
                         </div>
                         <p className="text-gray-400 text-sm">

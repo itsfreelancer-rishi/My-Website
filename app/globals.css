@@ -3,9 +3,9 @@
 @tailwind utilities;
 
 :root {
-    --navy: #0D3B66;
-    --charcoal: #3C3C3C;
-    --gold: #C7A008;
+    --navy: #1B4965;
+    --charcoal: #3D3D3D;
+    --gold: #D4A017;
     --white: #FFFFFF;
 }
 
@@ -41,7 +41,7 @@ body {
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: #d4b00a;
+    background: #e5b01f;
 }
 
 /* Smooth transitions */
